@@ -1,0 +1,102 @@
+{
+	"info": {
+		"_postman_id": "756e8f44-0b82-4257-a505-6c2f511ff203",
+		"name": "Test Person",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21908330"
+	},
+	"item": [
+		{
+			"name": "Save",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"2\",\r\n\t\"typePerson\":\"Natural\",\r\n\t\"address\":{\r\n        \"address\":\"Jr. Manuel Candamo 820\"\r\n    },\r\n\t\"documents\":{\r\n        \"documentType\":\"DNI\",\r\n        \"nroDocument\":\"46548700\"\r\n    },\r\n\t\"personLegal\":\"\",\r\n\t\"personNatural\":{\r\n        \"names\":\"Monica Patricia\",\r\n        \"surnames\":\"Barcia Pebe\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/person",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"person"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FindAll",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/person",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"person"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FindById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/person/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"person",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"documents\":{\r\n        \"documentType\":\"DNI\",\r\n        \"nroDocument\":\"90484341\"\r\n    },\r\n\t\"personNatural\":{\r\n        \"names\":\"Jonathan Patricio\",\r\n        \"surnames\":\"Benavides Barcia\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/person/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"person",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
