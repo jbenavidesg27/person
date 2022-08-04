@@ -1,5 +1,7 @@
 package com.persona.model;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -22,7 +24,7 @@ public class Person {
 	
 	private String typePerson;
 	
-	private Address address;
+	private List<Address> address;
 	
 	private Documents documents;
 	
