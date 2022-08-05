@@ -1,43 +1,45 @@
 package com.persona.service.impl;
 
+import com.persona.dao.PersonDao;
+import com.persona.model.Person;
+import com.persona.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.persona.dao.IPersonDao;
-import com.persona.model.Person;
-import com.persona.service.IPersonService;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Service Implement.
+ *
+ */
 @Service
-public class PersonServiceImpl implements IPersonService{
-	
-	@Autowired
-	IPersonDao iPerson;
+public class PersonServiceImpl implements PersonService {
+  
+  @Autowired
+  PersonDao personDao;
 
-	@Override
-	public Mono<Person> save(Person person) {
-		
-		return iPerson.save(person);
-	}
+  @Override
+  public Mono<Person> save(Person person) {
+    
+    return personDao.save(person);
+  }
 
-	@Override
-	public Mono<Person> update(Person person) {
-		
-		return iPerson.save(person);
-	}
+  @Override
+  public Mono<Person> update(Person person) {
+    
+    return personDao.save(person);
+  }
 
-	@Override
-	public Flux<Person> findAll() {
-		
-		return iPerson.findAll();
-	}
+  @Override
+  public Flux<Person> findAll() {
+    
+    return personDao.findAll();
+  }
 
-	@Override
-	public Mono<Person> findById(String id) {
-		
-		return iPerson.findById(id);
-	}
+  @Override
+  public Mono<Person> findById(String id) {
+    
+    return personDao.findById(id);
+  }
 
 }
