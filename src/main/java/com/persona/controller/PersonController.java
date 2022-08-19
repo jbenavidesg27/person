@@ -1,5 +1,8 @@
 package com.persona.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.persona.kafka.producer.PersonProducer;
 import com.persona.model.Person;
 import com.persona.service.PersonService;
 import java.net.URI;
@@ -29,6 +32,9 @@ public class PersonController {
   @Autowired
   PersonService personService;
   
+  @Autowired
+  PersonProducer personProducer;
+  
   /**
    * Peticiones Rest.
    * List all active.
@@ -48,6 +54,21 @@ public class PersonController {
   @GetMapping("/{id}")
   public Mono<ResponseEntity<Person>> findById(@PathVariable("id") String id) {
     return personService.findById(id)
+    		.flatMap(j -> {					
+				try {
+					ObjectMapper mapper = new ObjectMapper();
+					// Java objects to JSON string - compact-print
+			        String jsonString = mapper.writeValueAsString(j);
+			        personProducer.sendMessages(jsonString);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return Mono.just(j);
+			})
         .map(p -> ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body(p));
