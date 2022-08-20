@@ -1,48 +1,28 @@
 package com.persona.kafka.producer;
 
-import java.time.Instant;
+import java.util.function.Supplier;
 
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+
+import com.nttdata.bootcamp.common.event.PersonEvent;
 
 import reactor.core.publisher.Flux;
-import reactor.kafka.sender.KafkaSender;
-import reactor.kafka.sender.SenderRecord;
+import reactor.core.publisher.Sinks;
 
-@Component
+@Configuration
 public class PersonProducer {
-private static final Logger log = LoggerFactory.getLogger(PersonProducer.class.getName());	
-	
-	private final KafkaSender<String, String> kafkaSender; 
-	
-	private static final String TOPIC = "person-topic";
+	@Bean
+    public Sinks.Many<PersonEvent> personSinks(){
+        return Sinks.many().multicast().onBackpressureBuffer();
+    }
 
-	public PersonProducer(@Qualifier("kafkaStringSender")KafkaSender<String, String> kafkaSender) {
-		this.kafkaSender = kafkaSender;
-	}
-	
-	public void sendMessages(String message) throws InterruptedException {
-		
-		kafkaSender.send(Flux.just(message)
-                .map(i -> SenderRecord.create(new ProducerRecord<>(TOPIC, i), i)))
-                .doOnError(e -> log.error("Send failed", e))
-				.subscribe(r -> {
-					RecordMetadata metadata = r.recordMetadata();
-					Instant timestamp = Instant.ofEpochMilli(metadata.timestamp());
-					log.info("Message {}", r.correlationMetadata());
-					log.info("Sent successfully, topic-partition={} offset={} timestamp={}"
-							,metadata.topic()+metadata.partition(), 
-							metadata.offset(),timestamp);
-					});
+    @Bean
+    public Supplier<Flux<PersonEvent>> personSupplier(Sinks.Many<PersonEvent> sinks){
+       return sinks::asFlux;
     }
-	
-	public void close() {
-		kafkaSender.close();
-    }
+
 	
 	
 

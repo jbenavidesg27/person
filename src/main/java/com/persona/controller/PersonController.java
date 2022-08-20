@@ -1,11 +1,8 @@
 package com.persona.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.persona.kafka.producer.PersonProducer;
-import com.persona.model.Person;
-import com.persona.service.PersonService;
 import java.net.URI;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +15,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.nttdata.bootcamp.common.dto.PersonDto;
+import com.nttdata.bootcamp.common.event.PersonStatus;
+import com.persona.kafka.producer.PersonProducer;
+import com.persona.model.Person;
+import com.persona.service.PersonService;
+import com.persona.service.impl.PersonStatusPublisher;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -34,6 +39,9 @@ public class PersonController {
   
   @Autowired
   PersonProducer personProducer;
+  
+  @Autowired
+  PersonStatusPublisher publisher;
   
   /**
    * Peticiones Rest.
@@ -53,22 +61,7 @@ public class PersonController {
    */
   @GetMapping("/{id}")
   public Mono<ResponseEntity<Person>> findById(@PathVariable("id") String id) {
-    return personService.findById(id)
-    		.flatMap(j -> {					
-				try {
-					ObjectMapper mapper = new ObjectMapper();
-					// Java objects to JSON string - compact-print
-			        String jsonString = mapper.writeValueAsString(j);
-			        personProducer.sendMessages(jsonString);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JsonProcessingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return Mono.just(j);
-			})
+    return personService.findById(id)    		
         .map(p -> ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body(p));
@@ -79,9 +72,18 @@ public class PersonController {
    * 
    */
   @PostMapping
-  public Mono<ResponseEntity<Person>> save(@RequestBody Person person, 
+  public Mono<ResponseEntity<Person>> save(@RequestBody PersonDto person, 
       final ServerHttpRequest req) {
     return personService.save(person)
+			.flatMap(p -> {
+				ModelMapper mapper =  new ModelMapper();
+				
+				if (!p.getId().isEmpty()) {
+					PersonDto personModel  = mapper.map(p, PersonDto.class);//					
+					publisher.publishPersonEvent(personModel, PersonStatus.CREATED);				}
+				
+				return Mono.just(p);
+			})
         .map(p -> ResponseEntity.created(URI.create(req.getURI()
         .toString().concat("/").concat(p.getId())))
             .contentType(MediaType.APPLICATION_JSON)
@@ -100,10 +102,13 @@ public class PersonController {
     return monoBd.zipWith(monoBody, (bd, ps) -> {
       bd.setId(id);
       bd.setDocuments(ps.getDocuments());
-      bd.setPersonLegal(ps.getPersonLegal());
-      bd.setPersonNatural(ps.getPersonNatural());
+      bd.setAccount(ps.getAccount());
+      bd.setAccountStatus(ps.getAccountStatus());
       bd.setTypePerson(ps.getTypePerson());
-      bd.setAddress(ps.getAddress());
+      bd.setClient(ps.getClient());
+      bd.setPersonStatus(ps.getPersonStatus());
+      bd.setTypeAccount(ps.getTypeAccount());
+    
       return bd;
     })
         .flatMap(personService::update)

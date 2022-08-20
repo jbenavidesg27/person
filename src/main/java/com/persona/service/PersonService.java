@@ -1,5 +1,6 @@
 package com.persona.service;
 
+import com.nttdata.bootcamp.common.dto.PersonDto;
 import com.persona.model.Person;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -10,7 +11,7 @@ import reactor.core.publisher.Mono;
  */
 public interface PersonService {
 
-  Mono<Person> save(Person person);
+  Mono<Person> save(PersonDto person);
   
   Mono<Person> update(Person person);
   

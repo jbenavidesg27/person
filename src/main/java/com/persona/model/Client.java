@@ -6,17 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Model Person Legal.
+ * Model Person Natural.
  *
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PersonLegal {
+public class Client {
     
+  private String names;
+  
+  private String surnames;
+  
   private String businessName;
-  
-  
 
 }

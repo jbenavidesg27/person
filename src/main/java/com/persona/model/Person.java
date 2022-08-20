@@ -1,12 +1,15 @@
 package com.persona.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.util.List;
+import com.nttdata.bootcamp.common.event.AccountStatus;
+import com.nttdata.bootcamp.common.event.PersonStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * Model Person.
@@ -24,13 +27,18 @@ public class Person {
   
   private String typePerson;
   
-  private List<Address> address;
+  private String typeAccount;
+  
+  private String account;
   
   private Documents documents;
   
-  private PersonLegal personLegal;
+  private Client client;
   
-  private PersonNatural personNatural;
+  
+  private PersonStatus personStatus;
+ 
+  private AccountStatus accountStatus;
   
   
 
