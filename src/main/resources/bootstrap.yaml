@@ -13,21 +13,11 @@ spring:
             destination: personSupplier-out-0
           accountPassiveConsumer-in-0 :
             destination: accountPassiveConsumer-in-0
-#        definition : personSupplier;accountPassiveConsumer
-#      bindings:
-#        personSupplier-out-0:
-#          destination: person-topic
-#        accountPassiveConsumer-in-0 :
-#          destination: passive-topic
-#    config:
-#      name: person-service
-#      discovery:
-#        enabled: true
-#        service-id: config
+
     
-#eureka:
-#  client:
-#    register-with-eureka: true
-#    fetch-registry: true
-#    service-url:
-#      default-zone: http://localhost:8761/eureka/
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      default-zone: http://localhost:8761/eureka/
