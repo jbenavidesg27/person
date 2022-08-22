@@ -29,7 +29,7 @@ public class PersonStatusUpdateHandler {
 
 	@Transactional
 	public void updatePerson(String id, Consumer<Person>  consumer) {
-		(repository.findById(id)).doOnSuccess((consumer.andThen(this::updatePerson)));
+		(repository.findById(id)).subscribe((consumer.andThen(this::updatePerson)));
 //		Mono<Person> monoPerson =  repository.findById(id);
 //		monoPerson.doOnSuccess(consumer.andThen(this::updateOrder));
 //		
@@ -45,8 +45,9 @@ public class PersonStatusUpdateHandler {
 		boolean isPaymentComplete = AccountStatus.CREATED.equals(client.getAccountStatus());
         PersonStatus personStatus = isPaymentComplete ? PersonStatus.CREATED : PersonStatus.CANCELLED;
         client.setPersonStatus(personStatus);
+        client.setAccountStatus(client.getAccountStatus());
         if (!isPaymentComplete) {
-            publisher.publishPersonEvent(convertEntityToDto(client), personStatus);;
+            publisher.publishPersonEvent(convertEntityToDto(client), personStatus);
         }
 	}
 

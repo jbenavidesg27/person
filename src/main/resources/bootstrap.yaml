@@ -13,6 +13,11 @@ spring:
             destination: personSupplier-out-0
           accountPassiveConsumer-in-0 :
             destination: accountPassiveConsumer-in-0
+    config:
+      name: person-service
+      discovery:
+        enabled: true
+        service-id: config
 
     
 eureka:
